@@ -44,11 +44,11 @@
 # Как запустить предложенное решение
 
 1. Скорректировать настройки базы данных в файле настроек settings.ini, указав корректные значения для полей:
-    database_name = test_db
-    user = postgres
-    password = user
-    host = 127.0.0.1
-    port = 5432
+    database_name = test_db,
+    user = postgres,
+    password = user,
+    host = 127.0.0.1,
+    port = 5432.
 2. Файл с данными должен называться data.csv (имя можно изменить в файле настроек settings.ini изменив соответствующее поле data_file = data.csv).
     Файл с данными должен распологаться в корне папки проекта.
 3. Установить виртуальное окружение при помощи setup_environment.bat.
