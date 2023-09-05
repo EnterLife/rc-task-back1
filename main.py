@@ -4,6 +4,7 @@ import traceback
 
 import pandas as pd
 import psycopg2
+from sqlalchemy import create_engine
 
 import logger
 
@@ -69,21 +70,14 @@ class DatabaseConnector:
 
     def insert_data(self, new_data):
         logger.info('Entering data into a table')
-        conn = psycopg2.connect(
-            database=self.database, user=self.user, password=self.password,
-            host=self.host, port=self.port
+        engine = create_engine(
+            f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}"
             )
-        cur = conn.cursor()
-
-        for i, row in new_data.iterrows():
-            cur.execute("""
-                INSERT INTO projects (project, year_2022, year_2023, year_2024, year_2025)
-                VALUES (%s, %s, %s, %s, %s);
-            """, (row['проект'], row['2022'], row['2023'], row['2024'], row['2025']))
-
-        conn.commit()
-        cur.close()
-        conn.close()
+        new_data = new_data.rename(columns={
+            'проект': 'project', '2022': 'year_2022', '2023': 'year_2023',
+            '2024': 'year_2024', '2025': 'year_2025'
+            })
+        new_data.to_sql('projects', engine, if_exists='append', index=False)
 
 
 if __name__ == "__main__":
@@ -104,7 +98,6 @@ if __name__ == "__main__":
     try:
         data_processor = DataProcessor(file_path)
         data_processor.process_data()
-
         db_connector = DatabaseConnector(database, user, password, host, port)
         db_connector.create_table()
         db_connector.insert_data(data_processor.new_data)

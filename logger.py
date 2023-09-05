@@ -2,6 +2,7 @@ import logging
 import os
 import configparser
 
+
 class Logger:
     def __init__(self, log_file, log_level):
         self.log_file = log_file
